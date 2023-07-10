@@ -13,6 +13,9 @@ class _LoanQualificationAppState extends State<LoanQualificationApp> {
 
   TextEditingController searchController = TextEditingController();
 
+DateTime currentDate = DateTime.now();
+DateTime certainDate = DateTime(2023, 07, 31); // Replace with your certain date
+
   Future<void> loadCsvData() async {
     final csvString = await rootBundle.loadString('assets/Book2.csv');
     List<List<dynamic>> rowsAsListOfValues = const CsvToListConverter().convert(csvString);
@@ -40,26 +43,29 @@ class _LoanQualificationAppState extends State<LoanQualificationApp> {
 
   @override
   Widget build(BuildContext context) {
+    
+    bool isNotGreaterThanCertainDate = currentDate.isBefore(certainDate) || currentDate.isAtSameMomentAs(certainDate);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Loan Qualification'),
+          title: const Text('Loan Qualification'),
         ),
         body: Column(
           children: [
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: TextField(
                 controller: searchController,
                 onChanged: filterData,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'Search',
                   prefixIcon: Icon(Icons.search),
                 ),
               ),
             ),
-            Expanded(
+            isNotGreaterThanCertainDate ? Expanded(
               child: ListView.builder(
                 itemCount: filteredData.length,
                 itemBuilder: (context, index) {
@@ -88,7 +94,7 @@ class _LoanQualificationAppState extends State<LoanQualificationApp> {
                   ) : Container();
                 },
               ),
-            ),
+            ) : Container(),
           ],
         ),
       ),
